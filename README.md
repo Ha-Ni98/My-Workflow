@@ -18,6 +18,11 @@ This document outlines a comprehensive, three-stage workflow for building a full
 
 -----
 
+## ✨ Stage 02: Iterative Feature Implementation (Per-Page)
+
+**Goal:** To build out the application's pages feature-by-feature using a functional front-end with type-safe mock data. This stage is a repeatable loop for each page.
+
+-----
 
 ## 🔗 Stage 03: Back-End & Full-Stack Integration
 
