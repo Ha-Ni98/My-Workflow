@@ -1,0 +1,172 @@
+---
+description: Backend development rules, structure, and best practices
+globs:
+alwaysApply: false
+---
+
+# 🖥️ Backend Development Rules
+
+## 🔑 Core Principles
+1. **Separation of Concerns:** Backend logic must be strictly separated from frontend logic.  
+2. **Minimal Data Exposure:** Do not send all data to the frontend. Only return fields necessary for the requested operation.  
+3. **Consistency With Frontend Types:** Backend types must mirror frontend `/src/types` definitions (based on database schema). This ensures end-to-end type safety.
+
+---
+
+## 📂 Backend Directory Structure
+
+```
+
+backend/
+├── prisma/                 # Prisma schema and migrations
+│   ├── schema.prisma
+│   └── migrations/
+│
+├── src/
+│   ├── routes/             # Define all API routes (grouped by resource)
+│   │   ├── client.route.ts
+│   │   ├── product.route.ts
+│   │   └── order.route.ts
+│   │
+│   ├── controllers/        # Handle req/res, call services
+│   │   ├── client.controller.ts
+│   │   ├── product.controller.ts
+│   │   └── order.controller.ts
+│   │
+│   ├── services/           # Core business logic (database, filtering, transformations)
+│   │   ├── client.service.ts
+│   │   ├── product.service.ts
+│   │   └── order.service.ts
+│   │
+│   ├── middleware/         # Reusable middleware (auth, validation, error handling)
+│   │   ├── auth.middleware.ts
+│   │   ├── error.middleware.ts
+│   │   └── validate.middleware.ts
+│   │
+│   ├── types/              # Shared backend types (must mirror frontend types)
+│   │
+│   ├── utils/              # Helper functions (logging, parsing, JWT, etc.)
+│   │   ├── logger.ts
+│   │   ├── jwt.ts
+│   │   └── fileHandler.ts
+│   │
+│   ├── config/             # Configuration files
+│   │   ├── env.ts
+│   │   └── db.ts
+│   │
+│   ├── uploads/            # Destination folder for uploaded images/files
+│   │
+│   ├── app.ts              # Express app setup
+│   └── server.ts           # Server bootstrap (entry point)
+│
+├── .env                    # Environment variables
+└── package.json
+
+```
+- **backend/src/**
+  - **src/routes/\*.route.ts**  
+    - Define route endpoints by domain (e.g., `client.route.ts`, `product.route.ts`).  
+    - Each file should group related endpoints.  
+
+  - **src/controllers/\*.controller.ts**  
+    - Handle HTTP request/response cycle.  
+    - Validate inputs, catch errors, and send proper HTTP codes (200, 201, 400, 401, 404, 500).  
+    - Example: `client.controller.ts`.  
+
+  - **src/services/\*.service.ts**  
+    - Contain actual business logic and database operations.  
+    - Query database via Prisma, filter, transform results.  
+    - Should not handle HTTP response directly.  
+    - Example: `client.service.ts`.  
+
+  - **src/middleware/\*.middleware.ts**  
+    - Authentication & authorization (JWT verification).  
+    - Error handling middlewares.  
+    - Request validation (e.g., with Zod or Yup).  
+
+  - **src/types/**  
+    - TypeScript interfaces and DTOs.  
+    - Must mirror database schema and frontend `/src/types`.  
+
+  - **src/uploads/**  
+    - Destination for uploaded files (images, documents).  
+    - Ensure filenames are sanitized.  
+
+  - **src/config/**
+    - The configuration files (e.g., `env.ts`, `db.ts`)
+
+  - **src/utils/**
+    - Helper functions (e.g., `logger.ts`, `jwt.ts`, `fileHandler.ts`)
+
+  - **src/app.ts**
+    - Express app setup
+
+  - **src/server.ts**
+    - Server bootstrap (entry point)
+
+- **backend/prisma/**
+  - prisma schema and migration
+---
+
+## 📸 File Upload Rules
+- Use **Multer** for file upload handling.  
+- Restrict accepted MIME types (e.g., `image/jpeg`, `image/png`).  
+- Limit file size (configurable in `.env`).  
+- Store only file path or URL in DB, never raw binary.  
+- Optimize images before saving (resize, compress if necessary).  
+
+---
+
+## 🔒 Security & Query Handling
+- Only accept API requests from the **frontend server** (configure CORS properly).  
+- Validate **all inputs** (query params, body, headers).  
+- Use prepared queries via Prisma to prevent SQL injection.  
+- Sanitize strings to prevent XSS and injection attacks.  
+- Enforce **RBAC (Role-Based Access Control)** in protected routes.  
+
+---
+
+## 🛠️ Approved Backend Tech Stack
+- **Framework:** Express.js  
+- **ORM:** Prisma  
+- **Middleware:** CORS, Helmet (for security headers), Body-parser (JSON parsing)  
+- **Environment Management:** dotenv  
+- **File Uploads:** Multer  
+- **Validation:** Zod or Yup  
+- **Authentication:** JWT (jsonwebtoken)  
+- **Logging:** Winston or Pino  
+- **Documentation:** Swagger (OpenAPI 3.0)  
+
+Optional / Recommended:  
+- **Rate Limiting:** express-rate-limit  
+- **Caching:** Redis for performance-critical queries  
+- **Background Jobs:** BullMQ (with Redis)  
+
+---
+
+## ⚙️ Best Practices for Maintainability & Scalability
+1. **Controller Slimness:** Keep controllers minimal — push heavy logic to services.  
+2. **Error Handling:** Centralize error handling middleware. Always return structured error objects `{ code, message, details }`.  
+3. **Pagination:** Always paginate large list endpoints (`limit`, `offset` or `cursor-based`).  
+4. **DTO Pattern:** Use Data Transfer Objects to strictly define input/output contracts.  
+5. **Async/Await Everywhere:** Avoid callback hell. Always return `Promise<T>` from services.  
+6. **Environment Configs:** Never hardcode secrets. Use `.env`. Validate with Zod on startup.  
+7. **Optimization:**  
+   - Use indexes in DB on frequently queried columns.  
+   - Use Prisma `select` to return only needed fields.  
+   - Cache expensive queries with Redis.  
+   - Use batching where possible (e.g., `Promise.all`).  
+8. **Documentation:** Each route must be documented (Swagger/OpenAPI).  
+9. **Testing:**  
+   - Unit tests for services (Jest).  
+   - Integration tests for routes with Supertest.  
+
+---
+
+## 📊 Example Flow (Client CRUD)
+- `POST /api/client` → handled by `client.route.ts`.  
+- Route calls `client.controller.createClient`.  
+- Controller validates input, passes it to `client.service.createClient`.  
+- Service uses Prisma to insert client, returns DTO.  
+- Controller sends `201
+

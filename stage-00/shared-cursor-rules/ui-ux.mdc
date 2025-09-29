@@ -1,0 +1,30 @@
+---
+description: UI/UX, internationalization, theming & frontend  rules
+globs:
+alwaysApply: true
+---
+
+# 📱 Frontend & UI/UX Rules
+- **Mobile-First:** All components and pages must be designed for mobile screens first and then scaled up for larger viewports.
+- **Componentization:** Build clean, reusable components from `shadcn/ui` primitives built on Radix UI.
+- **Data Tables:** Use TanStack Table for complex data grids with sortable columns and text-based column filters.
+- **State Management:** Use React state and context for simple UI state. Use TanStack Query for all server state management.
+- **Forms:** Use React Hook Form with Zod validation for all form handling.
+- **Routing:** Use React Router DOM for client-side routing with proper route protection.
+- **Global Header:** Must contain: Logo, Search, Auth links/menu, Cart icon, and the EN/FR and Dark/Light toggles on ALL pages.
+- **Global Footer:** Must be present on all pages and contain links for Shipping, Returns, Privacy, Terms, a store locator, support contact, and social media icons.
+- **Performance:** Use React.memo, useMemo, and useCallback for performance optimization where appropriate.
+- **Accessibility:** Ensure all components meet WCAG 2.1 AA standards using Radix UI's built-in accessibility features.
+
+# 🌐 Internationalization (i18n) & Theming
+- **Translation Function:** Implement and use a global translation helper `t(key: string, lang: 'en' | 'fr')`.
+- **Translation File:** This function should read from `/src/config/translations.json` or a similar location.
+- **Translation Format:** The JSON keys map to a two-element array: `[ "english_string", "french_string" ]`. The `t()` helper must return `arr[0]` for 'en' and `arr[1]` for 'fr'.
+- **Adding Translations:**
+  - When creating or updating a page, **check if all UI text keys already exist** in `translations.json`.
+  - If a key does not exist, **add it** with proper English and French values.
+  - Always prefer **reusing existing keys** over creating duplicates.
+- **Theme:** Use `next-themes` for Dark/Light mode switching. Theme state must persist in `localStorage`. Ensure there is no flash of unstyled content (FOUT) on initial page load.
+- **Colors:** Define theme colors as CSS variables in `src/index.css` and reference them in `tailwind.config.ts`. Use semantic names: `background-neutral`, `surface`, `primary-accent`, `success`, `warning`, `destructive`.
+- **Language Toggle:** Implement language switching using React state and context providers.
+

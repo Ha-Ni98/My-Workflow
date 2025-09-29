@@ -1,0 +1,100 @@
+---
+description: Core principles, tech stack, architecture, and typing rules
+globs:
+alwaysApply: true
+---
+
+# 🛠️ Approved Tech Stack
+Only use technologies from this list if needed. Do not introduce new libraries unless explicitly asked.
+
+## Core Framework & Build Tools
+- **Framework:** React 18.3.1 (with Vite 5.4.19 as build tool)
+- **Language:** TypeScript 5.8.3
+- **Build Tool:** Vite 5.4.19 (with SWC for fast compilation)
+- **Routing:** React Router DOM 6.30.1
+
+## Styling & UI
+- **Styling:** Tailwind CSS 3.4.17
+- **UI Components:** shadcn/ui (built on Radix UI primitives)
+- **Component Variants:** class-variance-authority 0.7.1
+- **CSS Utilities:** clsx 2.1.1, tailwind-merge 2.6.0
+- **Animations:** tailwindcss-animate 1.0.7
+
+## State Management & Data Fetching
+- **Server State:** TanStack Query 5.83.0 (React Query v5)
+- **Forms & Validation:** React Hook Form 7.61.1 + Zod 3.25.76
+- **Form Resolvers:** @hookform/resolvers 3.10.0
+
+## UI Components & Interactions
+- **Radix UI Components:** Latest versions (1.1.x - 2.2.x range)
+- **Command Palette:** cmdk 1.1.1
+- **Carousel:** embla-carousel-react 8.6.0
+- **Date Picker:** react-day-picker 8.10.1
+- **Resizable Panels:** react-resizable-panels 2.1.9
+- **Drawer:** vaul 0.9.9
+- **Toast Notifications:** sonner 1.7.4
+
+## Charts & Data Visualization
+- **Charting:** Recharts 2.15.4
+
+## Icons & Theming
+- **Icons:** lucide-react 0.462.0
+- **Theming:** next-themes 0.4.6 (Dark/Light mode)
+- **Date Utilities:** date-fns 3.6.0
+
+## Development Tools
+- **Linting:** ESLint 9.32.0 with TypeScript support
+- **TypeScript:** typescript-eslint 8.38.0
+- **React Plugins:** eslint-plugin-react-hooks 5.2.0, eslint-plugin-react-refresh 0.4.20
+- **PostCSS:** postcss 8.5.6, autoprefixer 10.4.21
+- **Development Plugin:** lovable-tagger 1.1.9 (for component tagging)
+
+## Version Notes & Best Practices
+- **React 18.3.1:** Latest stable with Concurrent Features, Suspense, and improved performance
+- **Vite 5.4.19:** Fast HMR, excellent TypeScript support, optimized builds
+- **TypeScript 5.8.3:** Latest with improved performance and new language features
+- **TanStack Query 5.83.0:** Latest v5 with improved caching and DevTools
+- **React Hook Form 7.61.1:** Latest with improved performance and TypeScript support
+- **Zod 3.25.76:** Latest with enhanced validation capabilities
+- **Tailwind CSS 3.4.17:** Latest with new utilities and improved performance
+- **Radix UI:** All components are on latest stable versions with excellent accessibility
+
+# 📂 Project Directory Structure
+Adhere to this directory structure for all new files.
+- **/src**: Main source code directory.
+  - **/src/pages/**: React Router pages and route components.
+    - **/src/pages/admin/**: Protected admin dashboard pages.
+  - **/src/components/**: Shared, reusable React components.
+    - **/src/components/ui/**: Unstyled primitives from shadcn/ui (Button, Input, etc.).
+    - **/src/components/shared/**: Composite components used across the app (e.g., PageHeader, DataTable).
+    - **/src/components/layout/**: Layout components (Header, Footer, etc.).
+    - **/src/components/sections/**: Page section components.
+    - **/src/components/admin/**: Admin-specific components.
+    - **/src/components/providers/**: React context providers.
+  - **/src/layouts/**: Layout components for different page types.
+  - **/src/hooks/**: Custom React hooks.
+  - **/src/lib/**: Core utility functions and helper instances.
+  - **/src/assets/**: Static assets (images, icons, etc.).
+- **/public**: Static assets served directly.
+  - **/public/uploads/**: Destination for user-uploaded files.
+- **/config**: Global static configuration files (if needed).
+- **/types**: TypeScript interfaces and type definitions (if needed).
+
+# 🔀 Frontend Architecture (Component-Service-Hook Pattern)
+All frontend logic MUST be organized using this three-layer pattern:
+1.  **Components (`*.tsx`):** Pure UI components that handle presentation and user interactions. Should be lightweight and focused on rendering.
+2.  **Services (`*.service.ts`):** Business logic and API communication. Handle data fetching, transformations, and external API calls using TanStack Query.
+3.  **Hooks (`*.ts`):** Custom React hooks that encapsulate state management and side effects. Bridge between components and services.
+
+## Data Flow Pattern
+- **Components** → **Hooks** → **Services** → **External APIs**
+- Use TanStack Query for server state management
+- Use React Hook Form + Zod for form validation
+- Keep components pure and testable
+
+# 📄 TypeScript Interface & Type Organization
+- All TypeScript interfaces and type definitions should be co-located with their related components or in a dedicated `/src/types` directory.
+- Group related types into domain-specific files using the `*.types.ts` naming convention. For example, all types related to products should be in `product.types.ts`, and all user-related types in `user.types.ts`.
+- Use a barrel file at `/src/types/index.ts` to export all types from the individual `*.types.ts` files (e.g., `export * from './product.types.ts';`).
+- When importing types anywhere in the application, always import them from the types alias: `import { Product, User } from '@/types';`.
+- For component-specific types, consider co-locating them with the component file using `.types.ts` suffix.

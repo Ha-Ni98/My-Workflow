@@ -1,0 +1,68 @@
+---
+description: Development best practices, version-specific guidelines, and security considerations
+globs:
+alwaysApply: true
+---
+
+# 📜 Core Principles (The 10 Commandments)
+The AI must strictly follow these guiding principles in all its responses and code generation.
+1.  **Clarity Beats Cleverness:** Prioritize clear, readable, and maintainable code over overly complex or 'clever' solutions.
+2.  **Everything Must Be Modular:** Design components, services, and functions to be reusable, replaceable, and decoupled. Avoid hardcoding and tangled logic.
+3.  **Use Types and Docs Religiously:** All functions, components, and classes must have clear TypeScript types. Use JSDoc comments for complex logic.
+4.  **Make Errors Helpful:** Implement robust error handling. Throw custom, informative exceptions and log context to guide developers.
+5.  **Never Mix Concerns:** Maintain a strict separation of concerns. UI (React components) ≠ Business Logic (controllers/services) ≠ Data Storage (Prisma).
+6.  **No Feature Without a Use Case:** Do not add code or features "just in case." Adhere strictly to the requested requirements.
+7.  **Everything is Replaceable:** Use architectural patterns (like abstracting services) that make it easy to swap implementations later without major refactoring.
+8.  **One Source of Truth:** Ensure configuration, state, and business rules originate from a single, authoritative source. Avoid duplicating constants or logic.
+9.  **Docs are Part of the Product:** All systems and endpoints should be understandable from the code and accompanying JSDoc/markdown documentation.
+10. **Done Means It Works Without You:** A feature is complete only when it's testable, debuggable, and extensible by another developer without your direct help.
+
+# 🚀 Development Best Practices & Version-Specific Guidelines
+
+## Vite 5.4.19 Best Practices
+- **Fast Refresh:** Leverage Vite's instant HMR for rapid development
+- **Build Optimization:** Use Vite's built-in code splitting and tree shaking
+- **Environment Variables:** Use `import.meta.env` instead of `process.env`
+- **Asset Handling:** Use `?url` suffix for importing assets as URLs
+- **TypeScript Integration:** Vite has excellent TypeScript support out of the box
+
+## React 18.3.1 Best Practices
+- **Concurrent Features:** Use `Suspense` for loading states and `startTransition` for non-urgent updates
+- **Strict Mode:** Always wrap your app in `<React.StrictMode>` for development
+- **Error Boundaries:** Implement error boundaries for better error handling
+- **Hooks Rules:** Follow the Rules of Hooks strictly - never call hooks conditionally
+
+## TanStack Query 5.83.0 Best Practices
+- **Query Keys:** Use consistent, hierarchical query keys for proper caching
+- **Error Handling:** Implement global error handling with `onError` callbacks
+- **Optimistic Updates:** Use `useMutation` with optimistic updates for better UX
+- **Background Refetching:** Configure `staleTime` and `cacheTime` appropriately
+- **DevTools:** Use React Query DevTools for debugging in development
+
+## React Hook Form 7.61.1 + Zod 3.25.76 Best Practices
+- **Schema Validation:** Define Zod schemas for all forms and API requests
+- **Type Safety:** Use `z.infer<typeof schema>` for type inference
+- **Performance:** Use `mode: 'onChange'` sparingly, prefer `mode: 'onBlur'` or `mode: 'onSubmit'`
+- **Custom Hooks:** Create custom hooks for complex form logic
+- **Error Handling:** Display field-specific errors using `formState.errors`
+
+## Tailwind CSS 3.4.17 Best Practices
+- **Custom Properties:** Use CSS custom properties for theme colors in `tailwind.config.ts`
+- **Component Classes:** Use `@apply` directive sparingly, prefer utility classes
+- **Responsive Design:** Use mobile-first approach with `sm:`, `md:`, `lg:` prefixes
+- **Dark Mode:** Use `dark:` prefix for dark mode styles
+- **Performance:** Purge unused styles in production builds
+
+## TypeScript 5.8.3 Best Practices
+- **Strict Mode:** Enable strict mode in `tsconfig.json`
+- **Type Definitions:** Use proper type definitions for all props and state
+- **Generic Types:** Use generics for reusable components and functions
+- **Utility Types:** Leverage TypeScript utility types like `Partial`, `Pick`, `Omit`
+- **Type Guards:** Use type guards for runtime type checking
+
+## Security Considerations
+- **XSS Prevention:** Sanitize all user inputs and use proper escaping
+- **CSRF Protection:** Implement CSRF tokens for state-changing operations
+- **Content Security Policy:** Configure CSP headers for production
+- **Dependency Security:** Regularly audit dependencies with `npm audit`
+- **Environment Variables:** Never expose sensitive data in client-side code
